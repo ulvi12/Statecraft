@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#245d4b">
+  <title>Statecraft — Create countries from US states</title>
+  <style>
+    :root{--ink:#173b34;--muted:#66796e;--paper:#f5f3e9;--line:#d9dfd2;--green:#245d4b;--orange:#c66a43}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea{font:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.5;cursor:wait}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--orange);outline-offset:3px}a{color:var(--green)}[hidden]{display:none!important}
+    header{height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px}.brand{font:29px Georgia,serif;letter-spacing:-.7px}.quiet-button{background:transparent;color:var(--ink);border:1px solid #cbd4c6;border-radius:7px;padding:8px 14px;font-size:12px}
+    .layout{display:grid;grid-template-columns:310px minmax(0,1fr);max-width:1500px;margin:0 auto;min-height:calc(100dvh - 72px)}aside{border-right:1px solid var(--line);padding:26px 22px;background:#eeeee3}.builder-panel>summary{font-size:18px;font-weight:600;cursor:pointer}.builder-intro{font-size:12px;color:var(--muted);margin:10px 0 16px}.builder{border-bottom:1px solid var(--line);padding-bottom:23px}label{display:block;font-size:12px;font-weight:600;margin:12px 0 6px}input{width:100%;padding:10px 11px;border:1px solid #cbd4c6;border-radius:6px;background:#fbfbf5;color:var(--ink)}#state-search{font-size:12px;padding:8px 10px;margin-bottom:8px}.state-picker{max-height:210px;overflow-y:auto;background:#fafaf3;border:1px solid #cbd4c6;border-radius:6px;padding:7px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.state-choice{text-align:left;padding:7px 8px;background:#e9ede1;color:var(--ink);font-size:11px;border-radius:4px}.state-choice[aria-pressed=true]{background:var(--green);color:white}.selection-note{font-size:11px;color:var(--muted);min-height:32px;margin:10px 0;overflow-wrap:anywhere}.primary{background:var(--green);color:white;border-radius:6px;padding:11px 16px;font-size:13px;font-weight:600}.builder .primary{width:100%}.atlas-heading{margin:23px 0 12px;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:600}.atlas-heading span:last-child{font-weight:400;color:var(--muted)}.atlas-empty{color:var(--muted);font-size:12px;border:1px dashed #bac7b5;padding:15px;border-radius:7px}.country-card{background:#fbfbf5;border:1px solid var(--line);padding:14px;border-radius:7px;margin-bottom:10px}.country-card h3{font:23px Georgia,serif;margin:0 0 5px;overflow-wrap:anywhere}.country-card p{font-size:11px;color:var(--muted);margin:0 0 12px}.country-numbers{display:grid;grid-template-columns:1fr 1fr;gap:9px}.country-numbers strong{display:block;font-size:17px}.country-numbers span{font-size:10px;color:var(--muted)}.country-card .per-person{font-size:11px;margin-top:10px;color:var(--green)}.country-ask{font-size:11px;background:#edf2e1;color:var(--ink);width:100%;border-radius:4px;padding:7px;margin-top:11px}.source-note{font-size:11px;color:var(--muted);padding-top:19px}.source-note a{display:block;margin-top:5px}
+    main{min-width:0;padding:26px 42px 22px;display:flex;flex-direction:column;height:calc(100dvh - 72px)}.workspace-heading{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:12px;font-size:12px;font-weight:600}.workspace-heading span{font-size:11px;color:var(--muted);font-weight:400}.scroll-area{flex:1;overflow-y:auto;scrollbar-width:thin;padding-right:5px;min-height:100px}.welcome{padding:28px 0 24px}.hero-top{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(230px,.85fr);gap:30px;align-items:center}.hero-copy{max-width:510px}h1{font:clamp(28px,3vw,40px)/1.18 Georgia,serif;font-weight:normal;letter-spacing:-.6px;margin:0 0 17px}.hero-copy p{font-size:14px;color:var(--muted);margin:0 0 12px;max-width:470px}.hero-copy .simple-explanation{color:var(--ink);font-size:13px}.map-figure{margin:0;align-self:center}.map-figure img{width:100%;height:auto;display:block}.map-figure figcaption{font-size:11px;color:var(--muted);line-height:1.6;margin-top:9px}.map-figure figcaption strong{color:var(--green);font-weight:600}.legend-dot{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:2px;margin-right:6px}.examples-label{font-size:13px;font-weight:600;margin:28px 0 13px}.examples{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}.example{text-align:left;padding:16px;background:#fbfbf4;border:1px solid var(--line);border-radius:8px;color:var(--ink);transition:border-color .15s,background .15s}.example:hover{border-color:var(--green);background:#f1f5e8}.example strong{display:block;font-size:13px;margin-bottom:9px;font-weight:650}.example p{font-size:12px;color:var(--muted);margin:0;line-height:1.65}.followup-example{font-size:12px;color:var(--muted);margin:18px 0 0}.followup-example span{color:var(--ink)}
+    #messages{display:flex;flex-direction:column;gap:21px;padding:12px 0 25px}.message{max-width:100%;border-bottom:1px solid var(--line);padding-bottom:21px}.message.user{align-self:flex-end;background:#e8eddc;border-radius:9px;border:0;padding:13px 18px;max-width:85%}.role{font-size:10px;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}.content{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px}.loading .content{color:var(--muted)}.loading .content:after{content:"";display:inline-block;width:6px;height:6px;margin-left:9px;border-radius:50%;background:var(--green);animation:pulse 1s infinite alternate}@keyframes pulse{to{opacity:.2}}.tool-details{margin:11px 0 0;border:1px solid var(--line);border-radius:6px;background:#fafbf3;font-size:11px}.tool-details summary{cursor:pointer;padding:9px 12px;color:var(--green);overflow-wrap:anywhere}.tool-details pre{margin:0;padding:12px;background:#eef1e7;border-top:1px solid var(--line);white-space:pre-wrap;overflow-wrap:anywhere;max-height:330px;overflow-y:auto;font-size:10px;line-height:1.55}.comparison{margin-top:17px;overflow-x:auto;border:1px solid var(--line);border-radius:7px;background:#fbfbf5}.comparison table{border-collapse:collapse;width:100%;min-width:470px;font-size:12px;font-variant-numeric:tabular-nums}.comparison caption{text-align:left;padding:12px 14px;font-size:11px;color:var(--muted);background:#eff2e6}.comparison th,.comparison td{padding:11px 14px;text-align:right;border-top:1px solid var(--line);white-space:nowrap}.comparison th{font-size:10px;color:var(--muted);font-weight:600}.comparison td:first-child,.comparison th:first-child{text-align:left;white-space:normal}.comparison .active-metric{color:var(--green);font-weight:650;background:#f0f4e8}.comparison .notice{padding:0 14px 12px;font-size:11px}
+    .composer{border-top:1px solid var(--line);padding-top:16px;background:var(--paper)}.input-shell{display:flex;align-items:flex-end;gap:12px;border:1px solid #c4d0bd;background:#fcfcf6;border-radius:9px;padding:10px 12px 10px 16px}.input-shell:focus-within{border-color:var(--green)}textarea{width:100%;border:0;background:transparent;outline:none;color:var(--ink);resize:none;min-height:48px;max-height:110px;font-size:14px;padding:8px 0}.input-shell button{padding:10px 17px;flex-shrink:0}.notice{font-size:12px;color:#9d4d31;margin-top:10px}
+    @media(min-width:761px){aside{max-height:calc(100dvh - 72px);overflow-y:auto;scrollbar-width:thin}.builder-panel>summary{list-style:none}.builder-panel>summary::-webkit-details-marker{display:none}}
+    @media(max-width:1150px){main{padding:24px}.hero-top{gap:18px;grid-template-columns:minmax(0,1.25fr) minmax(170px,.75fr)}h1{font-size:31px}.example{padding:12px}.examples{gap:8px}}
+    @media(max-width:900px) and (min-width:761px){.layout{grid-template-columns:270px minmax(0,1fr)}aside{padding:22px 17px}.hero-top{grid-template-columns:1fr}.map-figure{display:none}.examples{grid-template-columns:1fr}.example p{line-height:1.4}.example strong{margin-bottom:5px}.welcome{padding-top:12px}}
+    @media(max-width:760px){header{height:64px;padding:0 18px}.brand{font-size:26px}.layout{grid-template-columns:1fr;min-height:calc(100dvh - 64px)}aside{border-right:0;border-bottom:1px solid var(--line);padding:15px 18px}.builder-panel>summary{font-size:14px}.builder-intro{margin-bottom:12px}.builder{padding-bottom:16px}.state-picker{max-height:170px;grid-template-columns:repeat(3,minmax(0,1fr))}.selection-note{min-height:0}.atlas-heading{margin:14px 0 8px}#atlas{display:flex;gap:10px;overflow-x:auto}.country-card{min-width:220px;margin:0}.atlas-empty{border:0;padding:0}.source-note{display:none}main{height:auto;min-height:calc(100dvh - 210px);padding:19px 18px}.scroll-area{overflow:visible}.welcome{padding-top:12px}.hero-top{grid-template-columns:1fr;gap:18px}.hero-copy{max-width:none}h1{font-size:31px;max-width:340px}.hero-copy p{font-size:13px}.map-figure{width:245px;justify-self:center}.map-figure figcaption{text-align:center;font-size:10px}.examples-label{margin-top:23px}.examples{grid-template-columns:1fr}.example{padding:13px 15px}.example strong{margin-bottom:5px}.followup-example{font-size:11px}.composer{position:sticky;bottom:0;padding-bottom:12px;margin-top:14px}.message.user{max-width:95%}.comparison th,.comparison td{padding:10px}}
+    .country-card .industry-leader{margin-top:10px;line-height:1.6}.industry-details .comparison{margin:0;border:0;border-top:1px solid var(--line);border-radius:0}.industry-details th[scope=row]{font-size:12px;font-weight:400;color:var(--ink)}.industry-details td div{font-size:11px;color:var(--muted);margin-top:3px}
+    .builder-panel>summary{display:flex;align-items:center;justify-content:space-between;gap:14px;list-style:none;padding:13px 15px;border:1px solid #aabb9e;border-radius:8px;background:#e0e9d5;color:var(--ink);font-size:16px;box-shadow:0 1px 2px #173b3408}.builder-panel>summary:hover{background:#d4e2c7;border-color:var(--green)}.builder-panel>summary::-webkit-details-marker,.answer-table>summary::-webkit-details-marker{display:none}.disclosure-chevron{display:block;width:8px;height:8px;flex:0 0 8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg);margin-right:3px;transition:transform .15s}details[open]>summary .disclosure-chevron{transform:rotate(225deg)}
+    .answer-table{margin-top:18px;border:1px solid #a7bca5;border-radius:9px;background:#fbfcf6;overflow:hidden}.answer-table>summary{display:flex;align-items:center;gap:12px;list-style:none;cursor:pointer;padding:14px 15px;color:var(--ink);background:#eaf0df}.answer-table>summary:hover{background:#e0ead2}.table-badge{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:white;background:var(--green);padding:4px 7px;border-radius:4px;flex-shrink:0}.table-heading{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}.table-title{font-size:14px;font-weight:650;overflow-wrap:anywhere}.table-meta{font-size:11px;color:var(--muted)}
+    .tool-traces{margin-top:23px;padding-top:14px;border-top:1px dashed #cbd1cb}.technical-heading{font-size:10px;font-weight:650;letter-spacing:.8px;text-transform:uppercase;color:#727a73;margin:0}.technical-description{font-size:11px;color:#788078;margin:3px 0 10px}.tool-traces .tool-details{margin-top:7px;background:#eef0eb;border:1px dashed #d0d6ce;border-radius:5px}.tool-traces .tool-details summary{padding:9px 11px;color:#667064;font:11px/1.5 ui-monospace,SFMono-Regular,Consolas,monospace}.tool-traces .tool-details summary:hover{background:#e5e9e2}.tool-traces .tool-details pre{background:#e5e9e2;color:#596253;border-color:#d0d6ce}.tool-traces .tool-details.has-error summary{color:#9d4d31}
+    .composer-navigation{display:flex;justify-content:flex-end;margin-bottom:9px}#map-builder-title:focus{outline:none}.content code{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;background:#e8eddc;border-radius:3px;padding:1px 4px}
+    .hero-top{grid-template-columns:1fr}.hero-copy{max-width:700px}.hero-copy p{max-width:650px}.map-builder{margin-top:20px;padding:18px;border:1px solid #bdcdb5;border-radius:10px;background:#fafbf3}.map-builder-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}.map-builder-heading h2{font-size:15px;margin:0}.map-builder-heading p{font-size:12px;color:var(--muted);margin:4px 0 0}.map-builder-heading .quiet-button{white-space:nowrap;padding:7px 11px}.map-canvas{min-height:130px;margin-top:12px}.map-canvas svg{display:block;width:100%;height:auto;max-height:350px}.map-state{fill:#dbe2d1;stroke:#fafbf3;stroke-width:1;stroke-linejoin:round;vector-effect:non-scaling-stroke;cursor:pointer;touch-action:manipulation;outline:none}.map-state:hover{fill:#b3c8a8}.map-state.selected{fill:var(--green)}.map-state.selected:hover{fill:#357862}.map-state:focus-visible{outline:none;stroke:var(--orange);stroke-width:3}.map-state[aria-disabled=true]{pointer-events:none;cursor:wait;opacity:.6}.map-state-label{font-size:12px;color:var(--muted);margin:6px 0 12px;min-height:19px}.map-selected{display:flex;flex-wrap:wrap;gap:6px;max-height:92px;overflow-y:auto;margin-bottom:13px}.selected-chip{font-size:11px;background:#e4ecd8;border:1px solid #bfcfb3;color:var(--ink);border-radius:5px;padding:5px 8px}.selected-chip:hover{background:#d3e2c5}.map-form{display:flex;align-items:flex-end;gap:12px;border-top:1px solid var(--line);padding-top:2px}.map-form .name-field{flex:1;min-width:0}.map-form label{margin-top:10px}.map-form .primary{white-space:nowrap;margin-bottom:1px}.draft-feedback[data-kind=success]{color:var(--green)}.map-loading{font-size:12px;color:var(--muted);text-align:center;padding:35px 10px}
+    @media(max-width:760px){.layout{grid-template-columns:minmax(0,1fr)}aside{min-width:0}.country-card{flex:0 0 240px}.scroll-area,.message{min-width:0}.map-builder{padding:13px;margin-top:15px}.map-builder-heading{align-items:flex-start}.map-builder-heading h2{font-size:14px}.map-builder-heading p{font-size:11px}.map-builder-heading .quiet-button{font-size:11px;padding:6px 8px}.map-form{flex-direction:column;align-items:stretch;gap:10px}.map-form .primary{width:100%}.map-state-label{font-size:11px;min-height:34px}.map-selected{max-height:112px}}
+  </style>
+</head>
+<body>
+  <header><div class="brand">Statecraft</div><button id="new-world" class="quiet-button">New chat</button></header>
+  <div class="layout">
+    <aside>
+      <details id="builder-panel" class="builder-panel" open>
+        <summary><span>Create a country</span><span class="disclosure-chevron" aria-hidden="true"></span></summary>
+        <p class="builder-intro">Choose states here or on the map. Both use the same selection.</p>
+        <form id="builder" class="builder">
+          <label for="country-name">Country name</label><input id="country-name" maxlength="60" placeholder="e.g. Pacifica" required>
+          <label for="state-search">Choose US states</label><input id="state-search" type="search" placeholder="Search by state name or code" autocomplete="off">
+          <div class="state-picker" id="state-picker" role="group" aria-label="Select US states"></div>
+          <div class="selection-note" id="selection-note">No states selected yet.</div>
+          <button type="submit" class="primary" id="build-button">Create country</button>
+          <div class="notice draft-feedback" id="builder-notice" role="status" hidden></div>
+        </form>
+      </details>
+      <div class="atlas-heading"><span>Your countries</span><span id="country-count">0</span></div>
+      <div id="atlas"><div class="atlas-empty">Countries you create will appear here.</div></div>
+      <div class="source-note">Uses the latest complete annual GDP, population, and industry data from BEA.<a href="https://www.bea.gov/data/gdp/gdp-state" target="_blank" rel="noopener">View the data source</a></div>
+    </aside>
+    <main>
+      <div class="workspace-heading"><div>Chat with Statecraft</div><span id="status" role="status">Ready</span></div>
+      <div class="scroll-area" id="scroll-area">
+        <section class="welcome" id="welcome">
+          <div class="hero-top">
+            <div class="hero-copy">
+              <h1>What if US states formed new countries?</h1>
+              <p>Combine any US states into a fictional country. Compare GDP, population, and the industries that drive each economy.</p>
+              <p class="simple-explanation">Click states on the map to build your country, or describe it in chat. You can change its borders later.</p>
+            </div>
+          </div>
+          <section class="map-builder" aria-labelledby="map-builder-title">
+            <div class="map-builder-heading"><div><h2 id="map-builder-title" tabindex="-1">Build a country on the map</h2><p id="map-selection-count" aria-live="polite">0 states selected</p></div><button type="button" class="quiet-button" id="clear-selection" disabled>Clear selection</button></div>
+            <div class="map-canvas" id="map-canvas"><p class="map-loading">Loading the map…</p></div>
+            <p class="map-state-label" id="map-state-label">Click a state to add or remove it. Alaska and Hawaii are shown in insets.</p>
+            <div class="map-selected" id="map-selected" aria-label="Selected states"></div>
+            <form id="map-form" class="map-form"><div class="name-field"><label for="map-country-name">Country name</label><input id="map-country-name" maxlength="60" placeholder="Give your country a name" required></div><button type="submit" class="primary" id="map-build-button">Create country</button></form>
+            <div class="notice draft-feedback" id="map-notice" role="status" hidden></div>
+          </section>
+          <div class="examples-label">Choose an example, or write your own:</div>
+          <div class="examples">
+            <button class="example" data-example="pacific"><strong>Build a country</strong><p>“Combine California, Oregon, and Washington into Pacifica. How big is its economy?”</p></button>
+            <button class="example" data-example="compare"><strong>Compare two countries</strong><p>“Compare Pacifica with Lone Star, a country made of Texas. Which has a larger economy?”</p></button>
+            <button class="example" data-example="industries"><strong>Compare industry mix</strong><p>“What drives the economies of Pacifica and Lone Star? Compare their biggest industries.”</p></button>
+          </div>
+          <p class="followup-example">After creating Pacifica, try: <span>“Add Nevada. How does GDP per person change?”</span></p>
+        </section>
+        <div id="messages" role="log" aria-label="Chat messages" aria-live="polite"></div>
+      </div>
+      <form id="chat-form" class="composer"><div class="composer-navigation"><button type="button" class="quiet-button" id="back-to-map">↑ Back to map</button></div><div class="input-shell"><textarea id="user-input" rows="2" maxlength="4000" aria-label="Message Statecraft" placeholder="Tell me which states to combine or countries to compare…"></textarea><button type="submit" class="primary" id="send-button">Send</button></div></form>
+    </main>
+  </div>
+  <script>
+    const $ = id => document.getElementById(id);
+    const selected = new Set();
+    let countries = {}, history = [], sessionId = null, busy = false, statesByCode = {}, draftName = '';
+    const storageKey = 'statecraft-world-v2';
+    const compact = value => new Intl.NumberFormat('en-US', {notation:'compact', maximumFractionDigits:2}).format(value);
+    const dollars = value => '$' + compact(value);
+    const perPerson = value => new Intl.NumberFormat('en-US', {style:'currency',currency:'USD',maximumFractionDigits:0}).format(value);
+    function element(tag, className, text) { const el = document.createElement(tag); if(className) el.className = className; if(text !== undefined) el.textContent = text; return el; }
+    function inlineEmphasis(parent, text) {
+      // Keep emphasis within one line. Unpaired markers degrade to plain text.
+      // Use text nodes even for code spans: model output never becomes HTML.
+      const frames=[{node:parent}],current=()=>frames[frames.length-1].node;
+      const literal=value=>current().append(document.createTextNode(value));
+      const close=()=>{const frame=frames.pop();current().append(frame.node);};
+      const tokens=/\\[\\`*_]|`+|\*+|_+/g;let last=0,match;
+      while((match=tokens.exec(text))){
+        literal(text.slice(last,match.index));const token=match[0];last=tokens.lastIndex;
+        if(token[0]==='\\'){literal(token.slice(1));continue;}
+        if(token[0]==='`'){
+          let end=-1;const spans=/`+/g;spans.lastIndex=last;let span;
+          while((span=spans.exec(text)))if(span[0]===token){end=span.index;break;}
+          if(end<0){literal(token);continue;}
+          current().append(element('code','',text.slice(last,end)));last=end+token.length;tokens.lastIndex=last;continue;
+        }
+        const before=text[match.index-1]||'',after=text[last]||'',mark=token[0];
+        if(mark==='_'&&/[\p{L}\p{N}]/u.test(before)&&/[\p{L}\p{N}]/u.test(after)){literal(token);continue;}
+        const canClose=before&&!/\s/.test(before),canOpen=after&&!/\s/.test(after);let remaining=token.length;
+        while(canClose&&frames.length>1){const top=frames[frames.length-1];if(top.mark!==mark||top.size>remaining)break;remaining-=top.size;close();}
+        if(canOpen)while(remaining){const size=remaining>=2?2:1;frames.push({mark,size,node:element(size===2?'strong':'em')});remaining-=size;}
+        else if(!canClose&&remaining)literal(mark.repeat(remaining));
+      }
+      literal(text.slice(last));
+      // Flatten an unmatched opener while retaining any correctly nested spans.
+      while(frames.length>1){const frame=frames.pop();current().append(...frame.node.childNodes);}
+    }
+    function answerContent(text) {
+      // Remove the retired boilerplate from answers saved before the prompt update.
+      text=text.replace(/\*?\(Note:\s*Industry shares measure the composition of economic output, not employment\.\s*Information is a broad BEA sector covering software and tech publishing, but it does not capture the entirety of the tech ecosystem\.?\)\.?\*?/g,'').trim();
+      const content=element('div','content');text=text.replace(/^(\s*)[*-] /gm,'$1• ').replace(/^#{1,6} (.+)$/gm,'**$1**');
+      const lines=text.split('\n');lines.forEach((line,index)=>{if(index)content.append(document.createTextNode('\n'));inlineEmphasis(content,line);});return content;
+    }
+    function persist() { try { sessionStorage.setItem(storageKey, JSON.stringify({sessionId,countries,history,draft:{name:draftName,states:[...selected]}})); } catch {} }
+    function draftFeedback(text='',kind='error') { for(const id of ['builder-notice','map-notice']){const notice=$(id);notice.textContent=text;notice.dataset.kind=kind;notice.hidden=!text;} }
+    function setDraftName(name) { draftName=name;$('country-name').value=name;$('map-country-name').value=name; }
+    function syncSelection() {
+      document.querySelectorAll('.state-choice').forEach(button=>button.setAttribute('aria-pressed',String(selected.has(button.dataset.code))));
+      document.querySelectorAll('.map-state').forEach(path=>{const active=selected.has(path.dataset.code);path.classList.toggle('selected',active);path.setAttribute('aria-pressed',String(active));path.setAttribute('aria-disabled',String(busy));path.setAttribute('tabindex',busy?'-1':'0');});
+      $('selection-note').textContent=selected.size?[...selected].map(code=>statesByCode[code]).join(', '):'No states selected yet.';
+      $('map-selection-count').textContent=selected.size+' '+(selected.size===1?'state':'states')+' selected';
+      $('map-state-label').textContent='Click a state to add or remove it. Alaska and Hawaii are shown in insets.';
+      $('clear-selection').disabled=busy||!selected.size;
+      const chips=$('map-selected');chips.replaceChildren();
+      for(const code of selected){const chip=element('button','selected-chip',statesByCode[code]+' ×');chip.type='button';chip.disabled=busy;chip.setAttribute('aria-label','Remove '+statesByCode[code]+' from selection');chip.onclick=()=>toggleState(code);chips.append(chip);}
+    }
+    function toggleState(code) { if(busy||!Object.hasOwn(statesByCode,code))return;if(selected.has(code))selected.delete(code);else selected.add(code);draftFeedback();syncSelection();persist(); }
+    function resetDraft() { selected.clear();setDraftName('');syncSelection();draftFeedback();persist(); }
+    async function createCountry() {
+      if(busy)return;const name=draftName.trim(),codes=[...selected];
+      if(!name||!codes.length){draftFeedback('Give your country a name and choose at least one state.');return;}
+      draftFeedback();const data=await send(`Create or update the country named "${name}" using exactly these states: ${codes.join(', ')}.`);
+      const created=(data?.tool_calls||[]).some(call=>{try{const result=JSON.parse(call.result),country=result.country;return call.name==='assemble_country'&&country&&country.name.toLowerCase()===name.toLowerCase()&&country.states.length===codes.length&&codes.every(code=>country.states.includes(code));}catch{return false;}});
+      if(created){resetDraft();draftFeedback(name+' is ready. Choose states to build another country.','success');}
+      else if(data)draftFeedback('Your selection is saved. Check the chat response before trying again.');
+      else draftFeedback('Could not finish creating the country. Your selection is saved; try again.');
+    }
+    function scrollToEnd() { $('scroll-area').scrollTop = $('scroll-area').scrollHeight; }
+    function setBusy(value) { busy=value; ['send-button','build-button','map-build-button','new-world','country-name','map-country-name','state-search'].forEach(id => $(id).disabled=value); document.querySelectorAll('.example,.country-ask,.state-choice').forEach(button=>button.disabled=value);$('map-canvas').setAttribute('aria-busy',String(value));syncSelection();$('status').textContent=value?'Working on your request…':'Ready'; }
+    function renderAtlas() {
+      const atlas=$('atlas');atlas.replaceChildren();const values=Object.values(countries);
+      $('country-count').textContent=String(values.length);
+      if(!values.length)atlas.append(element('div','atlas-empty','Countries you create will appear here.'));
+      for(const country of values){
+        const card=element('article','country-card');card.append(element('h3','',country.name),element('p','',country.states.join(' · ')+' / '+country.year+' data'));
+        const numbers=element('div','country-numbers');
+        for(const [label,value] of [['GDP',dollars(country.gdp_usd)],['Population',compact(country.population)]]){const cell=element('div');cell.append(element('strong','',value),element('span','',label));numbers.append(cell);}
+        card.append(numbers,element('div','per-person',perPerson(country.gdp_per_person_usd)+' GDP per person'));
+        if(country.industry_mix?.length){const top=country.industry_mix[0];card.append(element('p','industry-leader', 'Largest industry: '+top.name+' ('+top.share_of_gdp_pct.toFixed(2)+'% of GDP)'));}
+        const ask=element('button','country-ask','Which states contribute the most?');ask.type='button';ask.disabled=busy;ask.onclick=()=>send('Explain which states contribute the most GDP to '+country.name+'.');card.append(ask);atlas.append(card);
+        const mix=element('button','country-ask','Explore industry mix');mix.type='button';mix.disabled=busy;mix.onclick=()=>send('Show the industry mix of '+country.name+'. Explain its largest sectors and their shares of GDP.');card.append(mix);
+      }
+    }
+    function renderIndustryMix(rows, year, container, expanded=false) {
+      if(!rows.length)return;
+      const details=element('details','answer-table industry-details');details.open=expanded;
+      const summary=element('summary'),heading=element('span','table-heading'),chevron=element('span','disclosure-chevron');chevron.setAttribute('aria-hidden','true');
+      heading.append(element('span','table-title',rows[0].countries.length===1?'Industry mix · '+rows[0].countries[0].name:'Industry comparison'),element('span','table-meta',year+' · Share of GDP'));
+      summary.append(element('span','table-badge','Table'),heading,chevron);details.append(summary);
+      const box=element('div','comparison'),table=element('table');
+      table.append(element('caption','', '20 broad sectors · Annual nominal GDP · Shares may differ slightly from 100% due to rounding'));
+      const head=element('thead'),header=element('tr'),label=element('th','','Industry');label.scope='col';header.append(label);
+      for(const country of rows[0].countries){const cell=element('th','',country.name);cell.scope='col';header.append(cell);}head.append(header);table.append(head);
+      const body=element('tbody');
+      for(const row of rows){const line=element('tr'),label=element('th','',row.name);label.scope='row';label.style.whiteSpace='normal';label.style.maxWidth='240px';line.append(label);
+        for(const country of row.countries){const cell=element('td');cell.append(element('strong','',country.share_of_gdp_pct.toFixed(2)+'%'),element('div','',dollars(country.gdp_usd)));line.append(cell);}body.append(line);
+      }
+      table.append(body);box.append(table);details.append(box);container.append(details);return details;
+    }
+    function renderComparison(result, container) {
+      if(result.industry_comparison){const details=renderIndustryMix(result.industry_comparison,result.year,container,true);if(result.overlapping_states.length)details.append(element('p','notice','Shared states: '+result.overlapping_states.join(', ')));return;}
+      const box=element('div','comparison'),table=element('table');
+      const labels={gdp_usd:'GDP',population:'population',gdp_per_person_usd:'GDP per person'};
+      table.append(element('caption','',result.year+' annual data · Ranked by '+labels[result.metric]));
+      const columns=[['name','Country'],['gdp_usd','GDP'],['population','Population'],['gdp_per_person_usd','GDP per person']];
+      const head=element('thead'),header=element('tr');
+      for(const [key,label]of columns){const cell=element('th',key===result.metric?'active-metric':'',label);cell.scope='col';header.append(cell);}head.append(header);table.append(head);
+      const body=element('tbody');
+      for(const country of result.ranking){const row=element('tr');for(const [key]of columns){const value=key==='name'?country.name:key==='population'?compact(country[key]):key==='gdp_per_person_usd'?perPerson(country[key]):dollars(country[key]);row.append(element('td',key===result.metric?'active-metric':'',value));}body.append(row);}table.append(body);box.append(table);
+      if(result.overlapping_states.length)box.append(element('p','notice','Shared states: '+result.overlapping_states.join(', ')));
+      container.append(box);
+    }
+    function addMessage(role, text, calls=[], loading=false) {
+      const message=element('article','message '+(role==='you'?'user':'assistant')+(loading?' loading':''));
+      message.append(element('div','role',role==='you'?'You':'Statecraft'),role==='you'?element('div','content',text):answerContent(text));
+      // Keep the readable answer and comparison together, with tool traces below.
+      for(const call of calls){try{const result=JSON.parse(call.result);if(call.name==='compare_countries'&&(result.ranking||result.industry_comparison))renderComparison(result,message);if(call.name==='assemble_country'&&result.country?.industry_mix){const country=result.country;renderIndustryMix(country.industry_mix.map(item=>({...item,countries:[{...item,name:country.name}]})),country.year,message);}}catch{}}
+      if(calls.length){const traces=element('section','tool-traces');traces.setAttribute('aria-label','Tool calls and raw data');traces.append(element('p','technical-description','Tool calls and raw data'));
+        for(const call of calls){let result;try{result=JSON.parse(call.result);}catch{result=call.result;}const details=element('details','tool-details'+(result?.error?' has-error':''));details.append(element('summary','',call.name+' · '+(result?.error?'needs attention':'completed')),element('pre','',JSON.stringify({name:call.name,args:call.args,result},null,2)));traces.append(details);}message.append(traces);
+      }
+      $('messages').append(message);scrollToEnd();return message;
+    }
+    async function send(text) {
+      text=text.trim();if(!text||busy)return;
+      $('user-input').value='';setBusy(true);addMessage('you',text);history.push({role:'you',text});
+      const loading=addMessage('assistant','Checking the data and calculating your countries…',[],true);
+      try{
+        const response=await fetch('/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,session_id:sessionId})});
+        const data=await response.json();if(!response.ok)throw Error(typeof data.detail==='string'?data.detail:'Please check your message and retry.');
+        if(sessionId&&data.session_id!==sessionId){countries={};history=history.slice(-1);}
+        sessionId=data.session_id;
+        for(const call of data.tool_calls||[]){try{const result=JSON.parse(call.result);if(call.name==='assemble_country'&&result.country){if(result.previous_name)delete countries[result.previous_name.toLowerCase()];countries[result.country.name.toLowerCase()]=result.country;}}catch{}}
+        loading.remove();addMessage('assistant',data.response,data.tool_calls||[]);history.push({role:'assistant',text:data.response,calls:data.tool_calls||[]});renderAtlas();persist();return data;
+      }catch(error){loading.classList.remove('loading');loading.querySelector('.content').textContent=error.message;history.push({role:'assistant',text:error.message});persist();}
+      finally{setBusy(false);$('user-input').focus();scrollToEnd();}
+    }
+    const prompts={
+      pacific:'Combine California, Oregon, and Washington into a country called Pacifica. Show its GDP, population, and GDP per person.',
+      compare:'Create Pacifica from California, Oregon, and Washington, and Lone Star from Texas. Compare their total GDP. Which has the larger economy?',
+      industries:'Create Pacifica from California, Oregon, and Washington, and Lone Star from Texas. Compare their industry mix: which sectors contribute the largest shares of GDP, and how do the two economies differ?'
+    };
+    $('chat-form').onsubmit=event=>{event.preventDefault();send($('user-input').value);};
+    $('back-to-map').onclick=()=>{document.querySelector('.map-builder').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});$('map-builder-title').focus({preventScroll:true});};
+    $('user-input').onkeydown=event=>{if(event.key==='Enter'&&!event.shiftKey&&!event.isComposing){event.preventDefault();send($('user-input').value);}};
+    document.querySelectorAll('.example').forEach(button=>button.onclick=()=>send(prompts[button.dataset.example]));
+    for(const id of ['builder','map-form'])$(id).onsubmit=event=>{event.preventDefault();createCountry();};
+    for(const id of ['country-name','map-country-name'])$(id).oninput=event=>{setDraftName(event.target.value);draftFeedback();persist();};
+    $('clear-selection').onclick=()=>{if(busy)return;selected.clear();syncSelection();draftFeedback();persist();};
+    $('state-search').oninput=()=>{const query=$('state-search').value.trim().toLowerCase();document.querySelectorAll('.state-choice').forEach(button=>{button.hidden=!(button.dataset.name.includes(query)||button.dataset.code.toLowerCase().includes(query));});};
+    $('new-world').onclick=async()=>{if(busy)return;setBusy(true);try{if(sessionId){const response=await fetch('/clear',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:sessionId})});if(!response.ok)throw Error('Could not start a new chat. Wait for the current response and retry.');}sessionId=null;history=[];countries={};$('messages').replaceChildren();resetDraft();renderAtlas();persist();}catch(error){addMessage('assistant',error.message);}finally{setBusy(false);}};
+    async function initializeMap() {
+      try{
+        const response=await fetch('/us-map.svg');if(!response.ok)throw Error('Map unavailable');
+        const source=new DOMParser().parseFromString(await response.text(),'image/svg+xml'),ns='http://www.w3.org/2000/svg';
+        const outlines=[...source.querySelectorAll('path[data-state-fips]')],namesToCodes=Object.fromEntries(Object.entries(statesByCode).map(([code,name])=>[name,code]));
+        if(outlines.length!==50||new Set(outlines.map(path=>namesToCodes[path.querySelector('title')?.textContent])).size!==50||outlines.some(path=>!namesToCodes[path.querySelector('title')?.textContent]))throw Error('Incomplete map');
+        const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox',source.documentElement.getAttribute('viewBox'));svg.setAttribute('role','group');svg.setAttribute('aria-label','Select US states on the map');svg.setAttribute('fill-rule','evenodd');
+        for(const outline of outlines){
+          const name=outline.querySelector('title').textContent,code=namesToCodes[name],path=document.createElementNS(ns,'path'),title=document.createElementNS(ns,'title');
+          path.setAttribute('d',outline.getAttribute('d'));path.classList.add('map-state');path.dataset.code=code;path.setAttribute('role','button');path.setAttribute('aria-label',name+' ('+code+')');title.textContent=name;path.append(title);
+          const describe=()=>{$('map-state-label').textContent=name+' ('+code+') · '+(selected.has(code)?'Selected. Click again to remove.':'Click to select.');};
+          path.addEventListener('click',()=>{toggleState(code);describe();});path.addEventListener('pointerenter',describe);path.addEventListener('focus',describe);
+          path.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();if(!event.repeat){toggleState(code);describe();}}});svg.append(path);
+        }
+        $('map-canvas').replaceChildren(svg);syncSelection();
+      }catch{$('map-canvas').replaceChildren(element('p','map-loading','Map unavailable right now. Choose states from the list, or describe your country in chat.'));}
+    }
+    async function initialize() {
+      if(window.matchMedia('(max-width:760px)').matches)$('builder-panel').open=false;
+      let savedDraft=null;
+      try{const saved=JSON.parse(sessionStorage.getItem(storageKey));if(saved){sessionId=saved.sessionId;countries=saved.countries||{};history=saved.history||[];savedDraft=saved.draft;setDraftName(typeof savedDraft?.name==='string'?savedDraft.name.slice(0,60):'');for(const entry of history)addMessage(entry.role,entry.text,entry.calls||[]);renderAtlas();}}catch{sessionId=null;countries={};history=[];}
+      try{const response=await fetch('/states');if(!response.ok)throw Error('Could not load states.');const states=await response.json();statesByCode=Object.fromEntries(states.map(state=>[state.code,state.name]));for(const state of states){const button=element('button','state-choice',state.name);button.type='button';button.title=state.name+' ('+state.code+')';button.dataset.name=state.name.toLowerCase();button.dataset.code=state.code;button.setAttribute('aria-label',state.name);button.setAttribute('aria-pressed','false');button.onclick=()=>toggleState(state.code);$('state-picker').append(button);}if(Array.isArray(savedDraft?.states))for(const code of savedDraft.states)if(Object.hasOwn(statesByCode,code))selected.add(code);syncSelection();await initializeMap();}catch{$('selection-note').textContent='State selector unavailable. You can still name states in chat.';$('map-canvas').replaceChildren(element('p','map-loading','State selection is unavailable. You can still describe your country in chat.'));}
+    }
+    initialize();
+  </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+[project]
+name = "statecraft"
+version = "0.1.0"
+description = "Create fictional countries from US states using real BEA economic data and a Gemini tool-calling agent"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn>=0.27.0",
+    "litellm>=1.50",
+    "google-cloud-aiplatform>=1.40.0",
+    "requests>=2.31",
+]
